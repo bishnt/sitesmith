@@ -4,6 +4,8 @@ import cors from "cors"
 import OpenAI from "openai"
 
 import { BASE_PROMPT, getSystemPrompt } from "./prompts"
+import { basePrompt as nodeBasePrompt } from "./defaults/node"
+import { basePrompt as reactBasePrompt } from "./defaults/react"
 
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
@@ -36,17 +38,17 @@ app.post("/template", async (req, res) => {
       return res.json({
         prompts: [
           BASE_PROMPT,
-          `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`
+          `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`
         ],
-        
+        uiPrompts: [reactBasePrompt]
       })
     }
     if (answer === "node") {
       return res.json({
         prompts: [
-          `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`
+          `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`
         ],
-        
+        uiPrompts: [nodeBasePrompt]
       })
     }
     return res.status(403).json({ message: "You can't access this" })
